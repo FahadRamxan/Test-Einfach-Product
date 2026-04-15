@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Brandilyst x Einfach Chat Experience</title>
+  <meta name="description" content="Animated landing page with embedded Einfach chatbot widget." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg-1: #fff6e8;
+      --bg-2: #ffe0b5;
+      --bg-3: #ffd3cc;
+      --ink: #18222f;
+      --accent-1: #ff6a3d;
+      --accent-2: #ffb347;
+      --accent-3: #2ab6a9;
+      --card: rgba(255, 255, 255, 0.72);
+      --border: rgba(24, 34, 47, 0.12);
+      --shadow: 0 20px 80px rgba(24, 34, 47, 0.16);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+    }
+
+    body {
+      font-family: "Space Grotesk", sans-serif;
+      color: var(--ink);
+      overflow-x: hidden;
+      background:
+        radial-gradient(1200px 700px at 8% 10%, rgba(255, 106, 61, 0.35), transparent 65%),
+        radial-gradient(900px 600px at 90% 20%, rgba(42, 182, 169, 0.28), transparent 62%),
+        linear-gradient(150deg, var(--bg-1), var(--bg-2) 42%, var(--bg-3));
+      animation: backgroundShift 16s ease-in-out infinite alternate;
+    }
+
+    .noise {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.06;
+      background-image: radial-gradient(#000 0.7px, transparent 0.7px);
+      background-size: 4px 4px;
+      z-index: 0;
+    }
+
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(20px);
+      z-index: 0;
+      opacity: 0.55;
+      mix-blend-mode: multiply;
+      animation: floatBlob 18s ease-in-out infinite;
+    }
+
+    .blob-a {
+      width: 320px;
+      height: 320px;
+      background: var(--accent-1);
+      top: -90px;
+      left: -60px;
+    }
+
+    .blob-b {
+      width: 260px;
+      height: 260px;
+      background: var(--accent-2);
+      bottom: 12%;
+      right: -70px;
+      animation-delay: -6s;
+    }
+
+    .blob-c {
+      width: 220px;
+      height: 220px;
+      background: var(--accent-3);
+      top: 55%;
+      left: 14%;
+      animation-delay: -12s;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      place-items: center;
+      min-height: 100vh;
+      padding: 28px;
+    }
+
+    .hero {
+      width: min(980px, 100%);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+      transform: translateY(14px);
+      opacity: 0;
+      animation: cardIn 900ms cubic-bezier(.2, .8, .2, 1) forwards;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 28px;
+      padding: clamp(22px, 4vw, 48px);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.72);
+      font-size: 0.86rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      animation: fadeSlide 700ms ease 180ms both;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--accent-3);
+      box-shadow: 0 0 0 0 rgba(42, 182, 169, 0.7);
+      animation: pulse 2.4s infinite;
+    }
+
+    h1 {
+      font-family: "Syne", sans-serif;
+      font-size: clamp(2rem, 5.2vw, 4.2rem);
+      line-height: 1;
+      letter-spacing: -0.03em;
+      margin-bottom: 18px;
+      animation: fadeSlide 700ms ease 260ms both;
+    }
+
+    p {
+      max-width: 52ch;
+      font-size: clamp(1rem, 2vw, 1.14rem);
+      line-height: 1.6;
+      opacity: 0;
+      animation: fadeSlide 700ms ease 350ms both;
+    }
+
+    .cta-row {
+      margin-top: 28px;
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeSlide 700ms ease 440ms both;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 18px;
+      font-weight: 700;
+      font-family: inherit;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: transform 200ms ease, box-shadow 200ms ease;
+    }
+
+    .btn-primary {
+      color: #fff;
+      background: linear-gradient(130deg, var(--accent-1), #ff8d66);
+      box-shadow: 0 10px 25px rgba(255, 106, 61, 0.35);
+    }
+
+    .btn-ghost {
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.64);
+      border: 1px solid var(--border);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .visual {
+      position: relative;
+      min-height: 300px;
+      border-radius: 22px;
+      border: 1px solid var(--border);
+      background:
+        linear-gradient(160deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.34)),
+        repeating-linear-gradient(
+          135deg,
+          rgba(24, 34, 47, 0.02) 0,
+          rgba(24, 34, 47, 0.02) 6px,
+          transparent 6px,
+          transparent 12px
+        );
+      overflow: hidden;
+      animation: fadeSlide 700ms ease 540ms both;
+    }
+
+    .ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 2px solid rgba(24, 34, 47, 0.14);
+      animation: spin 18s linear infinite;
+    }
+
+    .ring-1 {
+      width: 210px;
+      height: 210px;
+      top: 22%;
+      left: 18%;
+    }
+
+    .ring-2 {
+      width: 140px;
+      height: 140px;
+      top: 35%;
+      left: 34%;
+      animation-direction: reverse;
+      animation-duration: 12s;
+    }
+
+    .ring-3 {
+      width: 280px;
+      height: 280px;
+      top: 8%;
+      left: 10%;
+      border-style: dashed;
+      animation-duration: 24s;
+    }
+
+    .card-float {
+      position: absolute;
+      right: 12%;
+      top: 16%;
+      width: min(230px, 70%);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.8);
+      box-shadow: 0 12px 30px rgba(24, 34, 47, 0.12);
+      animation: bob 4.6s ease-in-out infinite;
+    }
+
+    .card-float h2 {
+      font-size: 1rem;
+      margin-bottom: 8px;
+      font-family: "Syne", sans-serif;
+      letter-spacing: 0.01em;
+    }
+
+    .card-float small {
+      display: inline-block;
+      margin-top: 8px;
+      font-weight: 700;
+      color: #355367;
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      text-align: center;
+      font-size: 0.9rem;
+      color: rgba(24, 34, 47, 0.8);
+      animation: fadeSlide 700ms ease 620ms both;
+    }
+
+    @media (max-width: 860px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .visual {
+        min-height: 240px;
+      }
+
+      .card-float {
+        right: 10px;
+        top: 14px;
+      }
+    }
+
+    @keyframes cardIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeSlide {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes floatBlob {
+      0% {
+        transform: translate(0, 0) scale(1);
+      }
+
+      50% {
+        transform: translate(18px, -20px) scale(1.08);
+      }
+
+      100% {
+        transform: translate(-14px, 16px) scale(0.97);
+      }
+    }
+
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes bob {
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-12px);
+      }
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(42, 182, 169, 0.65);
+      }
+
+      70% {
+        box-shadow: 0 0 0 12px rgba(42, 182, 169, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(42, 182, 169, 0);
+      }
+    }
+
+    @keyframes backgroundShift {
+      from {
+        background-position: 0 0, 0 0, 0 0;
+      }
+
+      to {
+        background-position: 30px -20px, -20px 35px, 0 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="blob blob-a" aria-hidden="true"></div>
+  <div class="blob blob-b" aria-hidden="true"></div>
+  <div class="blob blob-c" aria-hidden="true"></div>
+
+  <main class="page">
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="eyebrow">
+            <span class="dot"></span>
+            Live Chat Assistant Active
+          </div>
+          <h1>Drive Smarter.<br />Learn Faster.</h1>
+          <p>
+            Ask questions, get instant guidance, and stay on track with your driving school journey.
+            Your Einfach assistant is embedded and ready to help in real time.
+          </p>
+
+          <div class="cta-row">
+            <button class="btn btn-primary" type="button" onclick="window.scrollTo({ top: 0, behavior: 'smooth' });">
+              Start Chatting
+            </button>
+            <button class="btn btn-ghost" type="button" onclick="window.location.reload();">
+              Refresh Experience
+            </button>
+          </div>
+
+          <div class="footer-note">Chatbot loads as a widget on this page automatically.</div>
+        </div>
+
+        <aside class="visual" aria-label="Animated decorative panel">
+          <div class="ring ring-1"></div>
+          <div class="ring ring-2"></div>
+          <div class="ring ring-3"></div>
+
+          <div class="card-float">
+            <h2>Einfach Assistant</h2>
+            <p>Need help with lessons, documents, or bookings? The chatbot is ready.</p>
+            <small>Powered by tenant: driving-school-kodex</small>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://staging.einfach-fahrschule.de/api/widget/embed.js?tenant=driving-school-kodex"></script>
+</body>
+</html>
